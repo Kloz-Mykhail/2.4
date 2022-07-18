@@ -11,7 +11,7 @@ const hendler = {
   getItems,
   addItem: setItem,
   editItem: chengeItem,
-  deleteItem
+  deleteItem,
 };
 
 router.all('/api/v2/router', (req, res) => {

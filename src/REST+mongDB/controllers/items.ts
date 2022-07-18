@@ -1,18 +1,7 @@
 import { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { Item, Users, User } from '../types';
 
-const pathDB: string = path.join(__dirname, '..', 'DBv1.JSON');
-
-function updateDataBase(sessionUser: User) {
-  const dataBase: Users = JSON.parse(fs.readFileSync(pathDB, 'utf-8'));
-  dataBase.users = dataBase.users.map((user) => {
-    if (user.id !== sessionUser.id) return user;
-    return sessionUser;
-  });
-  fs.writeFileSync(pathDB, JSON.stringify(dataBase, null, '\t'));
-}
+import { Item } from '../types';
+import User from '../models/schema';
 
 export function getItems(req: Request, res: Response) {
   if (!req.session.user) {
@@ -27,8 +16,12 @@ export function setItem(req: Request, res: Response) {
     const { text }: { text: string } = req.body;
     const id: number = Date.now();
     req.session.user.items.push({ id, text, checked: false });
-
-    updateDataBase(req.session.user);
+    console.log(req.session.user.items);
+    User.findByIdAndUpdate(req.session.user._id, {
+      items: req.session.user.items,
+    }).catch((err) => {
+      throw err;
+    });
     res.json({ id });
   } catch (e) {
     console.error(e);
@@ -44,10 +37,14 @@ export function chengeItem(req: Request, res: Response) {
         if (curentItem.id === item.id) return item;
         return curentItem;
       });
-      updateDataBase(req.session.user);
     } else {
       req.session.user.items.push(item);
     }
+    User.findByIdAndUpdate(req.session.user._id, {
+      items: req.session.user.items,
+    }).catch((err) => {
+      throw err;
+    });
     res.json({ ok: true });
   } catch (e) {
     console.error(e);
@@ -58,9 +55,13 @@ export function chengeItem(req: Request, res: Response) {
 export function deleteItem(req: Request, res: Response) {
   try {
     req.session.user.items = req.session.user.items.filter(
-      (currentItem) => currentItem.id !== req.body.id
+      (currentItem) => currentItem.id !== req.body.id,
     );
-    updateDataBase(req.session.user);
+    User.findByIdAndUpdate(req.session.user._id, {
+      items: req.session.user.items,
+    }).catch((err) => {
+      throw err;
+    });
     res.json({ ok: true });
   } catch {
     res.status(500).json({ error: 'deleteItem failed' });

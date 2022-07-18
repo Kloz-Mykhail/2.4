@@ -1,7 +1,14 @@
+import mongoose from 'mongoose';
+
 type Item = { id: number; text: string; checked: boolean };
 type Items = Item[];
 
-type User = { id: number; login: string; pass: string; items: Items };
+interface User {
+  _id: mongoose.Types.ObjectId;
+  login: string;
+  pass: string;
+  items: Items;
+}
 type Users = { users: User[] };
 
 type LoginData = { login: string; pass: string };

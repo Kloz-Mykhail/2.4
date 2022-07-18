@@ -1,21 +1,15 @@
 import { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { User, Users, LoginData } from '../types';
 
-const pathDB: string = path.join(__dirname, '..', 'DBv1.JSON');
+import { User, LoginData } from '../types';
+import UserScheme from '../models/schema';
 
-export function logIn(req: Request, res: Response) {
+export async function logIn(req: Request, res: Response) {
   try {
     const { login, pass }: { login: string; pass: string } = req.body;
-    const dataBase: Users = JSON.parse(fs.readFileSync(pathDB, 'utf-8'));
+    const userFromDB = await UserScheme.findOne({ login, pass });
 
-    const currentUser: User | undefined = dataBase.users.find(
-      (user: User) => user.login === login && user.pass === pass
-    );
-
-    if (currentUser) {
-      req.session.user = currentUser as User;
+    if (userFromDB) {
+      req.session.user = userFromDB;
       console.log('Проверка прошла...');
       res.json({ ok: true });
     } else {
@@ -40,23 +34,18 @@ export function logOut(req: Request, res: Response) {
   }
 }
 
-export function register(req: Request, res: Response) {
+export async function register(req: Request, res: Response) {
   try {
     const data: LoginData = req.body;
-    const now = Date.now();
-    const dataBase: Users = JSON.parse(fs.readFileSync(pathDB, 'utf-8'));
-    const isFreeLogin = !dataBase.users.some(
-      (usr: User) => usr.login === data.login
-    );
+    const dataBase: User | null = await UserScheme.findOne(data);
 
-    if (isFreeLogin) {
-      dataBase.users.push({
-        id: now,
+    if (!dataBase) {
+      const user = new UserScheme({
         login: data.login,
         pass: data.pass,
-        items: []
+        items: [],
       });
-      fs.writeFileSync(pathDB, JSON.stringify(dataBase, null, '\t'));
+      user.save();
       res.json({ ok: true });
     } else {
       res.status(400).json({ error: 'Login is uncorrect' });
