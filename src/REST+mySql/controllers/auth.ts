@@ -9,10 +9,8 @@ export async function logIn(req: Request, res: Response) {
       'SELECT * from users WHERE login = ? AND pass = ?',
       [login, pass],
     );
-    console.log(usersFromDB[0]);
     if (usersFromDB.length === 1) {
       req.session.userId = usersFromDB[0].id;
-      console.log('Проверка прошла...');
       res.json({ ok: true });
     } else {
       res.json({ error: 'not found' });

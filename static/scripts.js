@@ -25,7 +25,7 @@ Vue.component('task', {
         </div>
     </div>  
 </div>
-`
+`,
 });
 
 const vue = new Vue({
@@ -34,7 +34,7 @@ const vue = new Vue({
     new_task: {
       text: '',
       editable: false,
-      checked: false
+      checked: false,
     },
     tasks: [],
     login: '',
@@ -42,13 +42,14 @@ const vue = new Vue({
     backendLanguage: 'JS',
     apiURL: 'http://localhost:3005/api/',
     apiVersion: 'v1',
-    step: ''
+    step: '',
   },
   computed: {
     backendSuffix() {
       return this.backendLanguage === 'PHP' ? '.php' : '';
-    }
+    },
   },
+
   methods: {
     getTasks() {
       const route = this.apiVersion === 'v1' ? '/items' : '/router';
@@ -59,8 +60,8 @@ const vue = new Vue({
         }?${new URLSearchParams(qs)}`,
         {
           credentials: 'include',
-          method: this.apiVersion === 'v1' ? 'GET' : 'POST'
-        }
+          method: this.apiVersion === 'v1' ? 'GET' : 'POST',
+        },
       )
         .then((res) => res.json())
         .then((response) => {
@@ -91,9 +92,9 @@ const vue = new Vue({
           body: request,
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+            'Content-Type': 'application/json',
+          },
+        },
       )
         .then((res) => res.json())
         .then((response) => {
@@ -101,7 +102,7 @@ const vue = new Vue({
             this.getTasks();
           } else {
             alert(
-              'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.'
+              'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.',
             );
           }
         });
@@ -120,9 +121,9 @@ const vue = new Vue({
             body: request,
             credentials: 'include',
             headers: {
-              'Content-Type': 'application/json'
-            }
-          }
+              'Content-Type': 'application/json',
+            },
+          },
         )
           .then((res) => res.json())
           .then((response) => {
@@ -131,7 +132,7 @@ const vue = new Vue({
               this.$set(this.new_task, 'text', '');
             } else {
               alert(
-                'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.'
+                'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.',
               );
             }
           });
@@ -141,7 +142,7 @@ const vue = new Vue({
       const request = JSON.stringify({
         text: this.tasks[index].text,
         id,
-        checked: this.tasks[index].checked
+        checked: this.tasks[index].checked,
       });
       const route = this.apiVersion === 'v1' ? '/items' : '/router';
       const qs = { action: this.apiVersion === 'v1' ? '' : 'editItem' };
@@ -154,9 +155,9 @@ const vue = new Vue({
           body: request,
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+            'Content-Type': 'application/json',
+          },
+        },
       )
         .then((res) => res.json())
         .then(() => {
@@ -167,7 +168,7 @@ const vue = new Vue({
       this.$set(
         this.tasks[index],
         'checked',
-        this.tasks[index].checked === false
+        this.tasks[index].checked === false,
       );
       this.checked = this.tasks[index].checked;
       this.updateTask(index, id);
@@ -196,8 +197,8 @@ const vue = new Vue({
         }?${new URLSearchParams(qs)}`,
         {
           method: this.apiVersion === 'v1' ? 'POST' : 'POST',
-          credentials: 'include'
-        }
+          credentials: 'include',
+        },
       )
         .then((res) => res.json())
         .then((response) => {
@@ -221,10 +222,10 @@ const vue = new Vue({
             credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
-              Cookie: document.cookie
+              Cookie: document.cookie,
             },
-            body: params
-          }
+            body: params,
+          },
         )
           .then((res) => res.json())
           .then((response) => {
@@ -236,7 +237,7 @@ const vue = new Vue({
               alert('Такая комбинация логина и пароля не найдена');
             } else {
               alert(
-                'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.'
+                'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.',
               );
             }
           });
@@ -255,9 +256,9 @@ const vue = new Vue({
             method: this.apiVersion === 'v1' ? 'POST' : 'POST',
             body: params,
             headers: {
-              'Content-Type': 'application/json'
-            }
-          }
+              'Content-Type': 'application/json',
+            },
+          },
         )
           .then((res) => {
             return res.json();
@@ -267,11 +268,14 @@ const vue = new Vue({
               this.logIn();
             } else {
               alert(
-                'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.'
+                'Произошла ошибка. Посмотрите консоль разработчика чтоб увидеть подробности.',
               );
             }
           });
       }
-    }
-  }
+    },
+  },
+  created: function () {
+    this.getTasks();
+  },
 });
