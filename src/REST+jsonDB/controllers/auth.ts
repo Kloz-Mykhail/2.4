@@ -11,12 +11,11 @@ export function logIn(req: Request, res: Response) {
     const dataBase: Users = JSON.parse(fs.readFileSync(pathDB, 'utf-8'));
 
     const currentUser: User | undefined = dataBase.users.find(
-      (user: User) => user.login === login && user.pass === pass
+      (user: User) => user.login === login && user.pass === pass,
     );
 
     if (currentUser) {
       req.session.user = currentUser as User;
-      console.log('Проверка прошла...');
       res.json({ ok: true });
     } else {
       res.json({ error: 'not found' });
@@ -46,7 +45,7 @@ export function register(req: Request, res: Response) {
     const now = Date.now();
     const dataBase: Users = JSON.parse(fs.readFileSync(pathDB, 'utf-8'));
     const isFreeLogin = !dataBase.users.some(
-      (usr: User) => usr.login === data.login
+      (usr: User) => usr.login === data.login,
     );
 
     if (isFreeLogin) {
@@ -54,7 +53,7 @@ export function register(req: Request, res: Response) {
         id: now,
         login: data.login,
         pass: data.pass,
-        items: []
+        items: [],
       });
       fs.writeFileSync(pathDB, JSON.stringify(dataBase, null, '\t'));
       res.json({ ok: true });
