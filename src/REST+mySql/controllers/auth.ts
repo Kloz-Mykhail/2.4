@@ -1,15 +1,17 @@
 import { Request, Response } from 'express';
-
-import { User, LoginData } from '../types';
-import UserScheme from '../models/schema';
+import { pool } from '../models/sqlConn';
+import { User } from '../types';
 
 export async function logIn(req: Request, res: Response) {
   try {
     const { login, pass }: { login: string; pass: string } = req.body;
-    const userFromDB = await UserScheme.findOne({ login, pass });
-
-    if (userFromDB) {
-      req.session.user = userFromDB;
+    const [usersFromDB] = await pool.execute<User[]>(
+      'SELECT * from users WHERE login = ? AND pass = ?',
+      [login, pass],
+    );
+    console.log(usersFromDB[0]);
+    if (usersFromDB.length === 1) {
+      req.session.userId = usersFromDB[0].id;
       console.log('Проверка прошла...');
       res.json({ ok: true });
     } else {
@@ -23,7 +25,7 @@ export async function logIn(req: Request, res: Response) {
 
 export function logOut(req: Request, res: Response) {
   try {
-    if (req.session.user) {
+    if (req.session.userId) {
       req.session.destroy((err) => {
         if (err) throw err;
       });
@@ -36,16 +38,18 @@ export function logOut(req: Request, res: Response) {
 
 export async function register(req: Request, res: Response) {
   try {
-    const data: LoginData = req.body;
-    const dataBase: User | null = await UserScheme.findOne(data);
+    const { login, pass }: { login: string; pass: string } = req.body;
 
-    if (!dataBase) {
-      const user = new UserScheme({
-        login: data.login,
-        pass: data.pass,
-        items: [],
-      });
-      user.save();
+    const [dataBase] = await pool.execute<User[]>(
+      'SELECT * from users WHERE login = ? AND pass = ?',
+      [login, pass],
+    );
+
+    if (dataBase.length === 0) {
+      await pool.execute<User[]>('INSERT INTO users(login,pass) VALUES(?,?)', [
+        login,
+        pass,
+      ]);
       res.json({ ok: true });
     } else {
       res.status(400).json({ error: 'Login is uncorrect' });

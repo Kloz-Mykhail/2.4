@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf ./dist && tsc -w",
-    "start": "node dist/REST+mongDB/index.js",
-    "dev": "nodemon dist/REST+mongDB/index.js"
+    "start": "node dist/REST+mySql/index.js",
+    "dev": "nodemon dist/REST+mySql/index.js"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +31,7 @@
     "typescript": "^3.3.3"
   },
   "dependencies": {
+    "mysql2": "^2.3.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.16.4",

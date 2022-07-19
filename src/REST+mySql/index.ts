@@ -2,15 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
 import fileStore from 'session-file-store';
-import mongoose from 'mongoose';
 import router from './router';
-import { User } from './types';
 
 const FileStore = fileStore(session);
 const PORT = 3005;
 const app = express();
-const db =
-  'mongodb+srv://lion:yTfxPB6lJ2OrEay2@cluster0.hmrsryc.mongodb.net/todos?retryWrites=true&w=majority';
 
 app.use(
   cors({
@@ -30,15 +26,9 @@ app.use(
 
 declare module 'express-session' {
   interface Session {
-    user: User;
+    userId: number;
   }
 }
-
-mongoose
-  .connect(db)
-  .then(() => console.log('Connect to data base'))
-  .catch((err) => console.error(err));
-
 app.use(express.static('static'));
 
 app.use(express.json());
