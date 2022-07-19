@@ -158,31 +158,6 @@ button {
   transition: background 0.1s, color 0.1s;
 }
 
-.settings {
-  margin: 20px 0;
-}
-
-.settings label {
-  margin: 5px 0;
-  display: block;
-}
-
-.settings input {
-  width: 300px;
-}
-
-.settings button {
-  background: white;
-  margin: 2px;
-  padding: 2px 5px;
-  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%), 0 25px 50px 0 rgb(0 0 0 / 10%);
-}
-
-.settings button.selected {
-  background: #27ae60;
-  color: white;
-}
-
 :focus {
   outline: #27ae60 dashed 2px;
 }

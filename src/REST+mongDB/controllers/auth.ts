@@ -10,7 +10,6 @@ export async function logIn(req: Request, res: Response) {
 
     if (userFromDB) {
       req.session.user = userFromDB;
-      console.log('Проверка прошла...');
       res.json({ ok: true });
     } else {
       res.json({ error: 'not found' });
